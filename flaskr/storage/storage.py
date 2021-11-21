@@ -63,6 +63,7 @@ def upload_file(file_name, bucket, object_name, region):
                              aws_secret_access_key='N7EzoKDETYcFtaUPqEUMrWdINVYgMpq629mYa7aT')
     try:
         response = s3_client.upload_file(file_name, bucket, object_name)
+        print('upload_file is good')
     except ClientError as e:
         logging.error(e)
         return False
@@ -76,6 +77,7 @@ def downloading_files(file_name, bucket, object_name, region):
                       aws_secret_access_key='N7EzoKDETYcFtaUPqEUMrWdINVYgMpq629mYa7aT')
     try:
         f = s3.download_file(bucket, object_name, file_name)
+        print('downloading_files is good')
     except ClientError as e:
         logging.error(e)
         return False
@@ -100,8 +102,10 @@ def find_object(bucket,region,object_name):
     bucket = s3.Bucket(bucket)
     a = [x for x in bucket.objects.all() if x.key == object_name]
     if len(a) > 0:
+        print("in find_object..... True")
         return True
     else:
+        print("in find_object..... False")
         return False
 
 def delete_object(bucket,region,object_name):

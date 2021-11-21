@@ -60,12 +60,12 @@ appC.conf.timezone = 'UTC'
 
 @appC.task(name="tasks.add")
 def test():
-    logger.info('hola mundo')
-    print(engine.table_names())
+    logger.info('En la tarea tasks.add')
+    print('engine.table_names().......... ',engine.table_names())
     result = session.query(Conversion).all()
-    print(result)
+    print('result session.query............. ',result)
     for row in result:
-        print(row)
+        print('row.................... ',row)
         if row.estado == 'uploaded':
             try:
                 if find_object('uniandes-bucket-s3', 'us-east-1',
