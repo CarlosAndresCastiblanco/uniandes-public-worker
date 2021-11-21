@@ -62,7 +62,7 @@ def upload_file(file_name, bucket, object_name, region):
                              aws_access_key_id='AKIAVI7PUQMWA7CHFW7Q',
                              aws_secret_access_key='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')
     try:
-        response = s3_client.upload_file(file_name, bucket, object_name)
+        s3_client.upload_file(file_name, bucket, object_name)
         print('upload_file is good')
     except ClientError as e:
         logging.error(e)
@@ -76,7 +76,7 @@ def downloading_files(file_name, bucket, object_name, region):
                       aws_access_key_id='AKIAVI7PUQMWA7CHFW7Q',
                       aws_secret_access_key='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')
     try:
-        f = s3.download_file(bucket, object_name, file_name)
+        s3.download_file(bucket, object_name, file_name)
         print('downloading_files is good')
     except ClientError as e:
         logging.error(e)
@@ -100,6 +100,7 @@ def find_object(bucket,region,object_name):
                         aws_access_key_id='AKIAVI7PUQMWA7CHFW7Q',
                         aws_secret_access_key='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')
     bucket = s3.Bucket(bucket)
+    print("in find_object i need to find......... ",object_name)
     a = [x for x in bucket.objects.all() if x.key == object_name]
     if len(a) > 0:
         print("in find_object..... True")

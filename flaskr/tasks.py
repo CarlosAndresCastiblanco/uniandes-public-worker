@@ -71,22 +71,22 @@ def test():
                 if find_object('uniandes-bucket-s3', 'us-east-1',
                                "origin-{}-{}.{}".format(row.usuario_id, row.id, row.origen)):
                     downloading_files(
-                        'flaskr/originales/{}'.format("origin-{}-{}.{}".format(row.usuario_id, row.id, row.origen)),
+                        'originales/{}'.format("origin-{}-{}.{}".format(row.usuario_id, row.id, row.origen)),
                         'uniandes-bucket-s3',
                         "origin-{}-{}.{}".format(row.usuario_id, row.id, row.origen),
                         'us-east-1'
                     )
                     archivo = AudioSegment.from_file(
-                        "flaskr/originales/origin-{}-{}.{}".format(row.usuario_id, row.id, row.origen),
+                        "originales/origin-{}-{}.{}".format(row.usuario_id, row.id, row.origen),
                         str(row.origen))
                     archivo.export(
-                        "flaskr/originales/destino-{}-{}.{}".format(row.usuario_id, row.id, row.destino),
+                        "originales/destino-{}-{}.{}".format(row.usuario_id, row.id, row.destino),
                         format=row.destino)
-                    upload_file("flaskr/originales/destino-{}-{}.{}".format(row.usuario_id, row.id, row.destino),
+                    upload_file("originales/destino-{}-{}.{}".format(row.usuario_id, row.id, row.destino),
                                 'uniandes-bucket-s3',
                                 "destino-{}-{}.{}".format(row.usuario_id, row.id, row.destino),
                                 'us-east-1')
-                    remove_file("flaskr/originales/destino-{}-{}.{}".format(row.usuario_id, row.id, row.destino))
+                    remove_file("originales/destino-{}-{}.{}".format(row.usuario_id, row.id, row.destino))
                     row.estado = "processed"
                     session.commit()
                     print('convertido satisfactoriamente',
