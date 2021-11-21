@@ -52,7 +52,7 @@ PATH = str(Path().absolute(), )
 appC.conf.beat_schedule = {
     'add-every-30-seconds': {
         'task': 'tasks.add',
-        'schedule': 5.0,
+        'schedule': 30,
     },
 }
 appC.conf.timezone = 'UTC'
@@ -82,6 +82,8 @@ def test():
                     archivo.export(
                         "originales/destino-{}-{}.{}".format(row.usuario_id, row.id, row.destino),
                         format=row.destino)
+                    print('convertido satisfactoriamente',
+                          "destino-{}-{}.{}".format(row.usuario_id, row.id, row.destino))
                     upload_file("originales/destino-{}-{}.{}".format(row.usuario_id, row.id, row.destino),
                                 'uniandes-bucket-s3',
                                 "destino-{}-{}.{}".format(row.usuario_id, row.id, row.destino),
@@ -89,25 +91,8 @@ def test():
                     remove_file("originales/destino-{}-{}.{}".format(row.usuario_id, row.id, row.destino))
                     row.estado = "processed"
                     session.commit()
-                    print('convertido satisfactoriamente',
-                          "destino-{}-{}.{}".format(row.usuario_id, row.id, row.destino))
                 else:
                     print("Archivo no encontrado en S3")
-                # usuario = session.query(Usuario).filter(row.usuario_id)
-                # remitente = "Desde gnucita <ebahit@member.fsf.org>"
-                # destinatario = "Mama de Gnucita <{}>".format(usuario.email)
-                # asunto = "E-mal HTML enviado desde Python"
-                # mensaje = """Audio Converter!<br/> <br/>
-                # Este es un <b>e-mail</b> confirmando la finalización de la conversión """
-                ##email = """From: %s 
-                # To: %s
-                # MIME-Version: 1.0
-                # Content-type: text/html
-                # Subject: %s
-                # %s
-                # """ % (remitente, destinatario, asunto, mensaje)
-                # smtp = smtplib.SMTP('localhost')
-                # smtp.sendmail(remitente, destinatario, email)
             except Exception as err:
                 print('error convirtiendo')
                 print(err)
