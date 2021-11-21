@@ -15,7 +15,7 @@ from sqlalchemy.orm import relationship
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.sql.sqltypes import DateTime
 import smtplib
-from flaskr.storage import *
+from storage import *
 
 engine = create_engine(
     'mysql+pymysql://admin:12345678@converter.cd0qbrcafg8c.us-east-1.rds.amazonaws.com:3306/converter', echo=True)
