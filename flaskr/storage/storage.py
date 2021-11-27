@@ -147,11 +147,18 @@ def receive_and_delete_messages_queue():
         WaitTimeSeconds=0
     )
 
-    print("Response...... ", response)
-
     if hasattr(response, 'Messages'):
         message = response['Messages'][0]
         receipt_handle = message['ReceiptHandle']
+
+        body = message['Body']
+        print("body......... ",body)
+
+        title = message['Title']
+        print("title......... ",title)
+
+        author = message['Author']
+        print("author......... ",author)
 
         # Delete received message from queue
         sqs.delete_message(

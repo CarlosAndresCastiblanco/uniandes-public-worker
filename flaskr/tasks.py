@@ -16,6 +16,23 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy.sql.sqltypes import DateTime
 import smtplib
 from storage import *
+from flask import Flask
+from flask_restful import Api
+from flaskr.vistas.vistas import RecursoDescargar
+
+settings_module = os.getenv('APP_SETTINGS_MODULE')
+flask_app = Flask(__name__)
+flask_app.config.update(
+    CELERY_BROKER_URL='redis://localhost:6379',
+    CELERY_RESULT_BACKEND='redis://localhost:6379'
+)
+
+flask_app.config.from_object(settings_module)
+app_context = flask_app.app_context()
+app_context.push()
+api = Api(flask_app)
+
+api.add_resource(RecursoDescargar, '/service')
 
 """
 Config Enviroment
@@ -54,7 +71,24 @@ class Conversion(Base):
 
 
 AudioSegment.converter = which("ffmpeg")
-appC = Celery('tasks', broker='redis://127.0.0.1:6379/0')
+
+def make_celery(app):
+    celery = Celery(
+        app.import_name,
+        backend=app.config['CELERY_RESULT_BACKEND'],
+        broker=app.config['CELERY_BROKER_URL']
+    )
+    celery.conf.update(app.config)
+
+    class ContextTask(celery.Task):
+        def __call__(self, *args, **kwargs):
+            with app.app_context():
+                return self.run(*args, **kwargs)
+
+    celery.Task = ContextTask
+    return celery
+
+appC = make_celery(flask_app)
 logger = get_task_logger(__name__)
 PATH = str(Path().absolute(), )
 
