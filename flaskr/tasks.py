@@ -23,11 +23,6 @@ from flaskr.models.modelos import db
 
 settings_module = os.getenv('APP_SETTINGS_MODULE')
 flask_app = Flask(__name__)
-flask_app.config.update(
-    CELERY_BROKER_URL='redis://localhost:6379',
-    CELERY_RESULT_BACKEND='redis://localhost:6379'
-)
-
 flask_app.config.from_object(settings_module)
 app_context = flask_app.app_context()
 app_context.push()
@@ -39,7 +34,7 @@ api.add_resource(RecursoDescargar, '/service')
 """
 Config Enviroment
 """
-uri_database = os.getenv('SQLALCHEMY_DATABASE_URI')
+#uri_database = os.getenv('SQLALCHEMY_DATABASE_URI')
 """
 Launch DataBase
 
