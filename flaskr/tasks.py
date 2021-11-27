@@ -15,7 +15,7 @@ from sqlalchemy.orm import relationship
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.sql.sqltypes import DateTime
 import smtplib
-from storage import *
+from flaskr.storage.storage import *
 from flask import Flask
 from flask_restful import Api
 from flaskr.vistas.vistas import RecursoDescargar
