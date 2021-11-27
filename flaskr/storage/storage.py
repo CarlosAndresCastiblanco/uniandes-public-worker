@@ -3,6 +3,9 @@ import boto3
 from botocore.exceptions import ClientError
 import os
 
+sso_region = os.getenv('SSO_REGION')
+queue_url = os.getenv('SQS_QUEUE_URL')
+
 
 def create_bucket(bucket_name, region):
     """Create an S3 bucket in a specified region
@@ -87,21 +90,23 @@ def downloading_files(file_name, bucket, object_name, region):
 def get_object_name(file_name):
     return os.path.basename(file_name)
 
+
 def remove_file(file_name):
     if os.path.exists(file_name):
         os.remove(file_name)
-        print('Archivo removido con exito ',file_name)
+        print('Archivo removido con exito ', file_name)
     else:
         print('No se pudo remover el archivo')
         return 'No se pudo remover el archivo', 500
 
-def find_object(bucket,region,object_name):
+
+def find_object(bucket, region, object_name):
     s3 = boto3.resource('s3',
                         region_name=region,
                         aws_access_key_id='AKIAVI7PUQMWA7CHFW7Q',
                         aws_secret_access_key='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')
     bucket = s3.Bucket(bucket)
-    print("in find_object i need to find......... ",object_name)
+    print("in find_object i need to find......... ", object_name)
     a = [x for x in bucket.objects.all() if x.key == object_name]
     if len(a) > 0:
         print("in find_object..... True")
@@ -110,7 +115,8 @@ def find_object(bucket,region,object_name):
         print("in find_object..... False")
         return False
 
-def delete_object(bucket,region,object_name):
+
+def delete_object(bucket, region, object_name):
     s3 = boto3.resource('s3',
                         region_name=region,
                         aws_access_key_id='AKIAVI7PUQMWA7CHFW7Q',
@@ -121,3 +127,37 @@ def delete_object(bucket,region,object_name):
         logging.error(e)
         return False
     return True
+
+
+def receive_and_delete_messages_queue():
+    # Create SQS client
+    sqs = boto3.client('sqs', region_name=sso_region)
+
+    # Receive message from SQS queue
+    response = sqs.receive_message(
+        QueueUrl=queue_url,
+        AttributeNames=[
+            'SentTimestamp'
+        ],
+        MaxNumberOfMessages=1,
+        MessageAttributeNames=[
+            'All'
+        ],
+        VisibilityTimeout=0,
+        WaitTimeSeconds=0
+    )
+
+    print("Response...... ", response)
+
+    if hasattr(response, 'Messages'):
+        message = response['Messages'][0]
+        receipt_handle = message['ReceiptHandle']
+
+        # Delete received message from queue
+        sqs.delete_message(
+            QueueUrl=queue_url,
+            ReceiptHandle=receipt_handle
+        )
+        print('Received and deleted message: %s' % message)
+    else:
+        print("Don't have messages")
