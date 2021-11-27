@@ -19,6 +19,7 @@ from flaskr.storage.storage import *
 from flask import Flask
 from flask_restful import Api
 from flaskr.vistas.vistas import RecursoDescargar
+from flaskr.models.modelos import db
 
 settings_module = os.getenv('APP_SETTINGS_MODULE')
 flask_app = Flask(__name__)
@@ -30,6 +31,7 @@ flask_app.config.update(
 flask_app.config.from_object(settings_module)
 app_context = flask_app.app_context()
 app_context.push()
+db.init_app(flask_app)
 api = Api(flask_app)
 
 api.add_resource(RecursoDescargar, '/service')
@@ -40,15 +42,15 @@ Config Enviroment
 uri_database = os.getenv('SQLALCHEMY_DATABASE_URI')
 """
 Launch DataBase
-"""
+
 engine = create_engine(uri_database, echo=True)
 Session = sessionmaker(bind=engine)
 session = Session()
 Base = declarative_base()
-"""
+
 Config Entities DataBase
 """
-
+"""
 
 class Usuario(Base):
     __tablename__ = 'usuario'
@@ -68,7 +70,7 @@ class Conversion(Base):
     estado = Column(String(50))
     fecha = Column(String(50))
     usuario_id = Column(Integer, ForeignKey('usuario.id'))
-
+"""
 
 AudioSegment.converter = which("ffmpeg")
 
